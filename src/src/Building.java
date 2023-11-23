@@ -42,6 +42,12 @@ public abstract class Building {
         }
     }
 
+
+    public void showRessources(){
+        ResourceManager resourceManager = ResourceManager.getInstance();
+        resourceManager.showRessource();
+    }
+
     public int getPopulation() {
         return population;
     }

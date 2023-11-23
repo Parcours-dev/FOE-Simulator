@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Manager {
     private List<Building> buildings;
@@ -23,10 +24,10 @@ public class Manager {
         }
     }
 
-    @Override
-    public String toString() {
-        return "Manager{" +
-                "buildings=" + buildings +
-                '}';
+    public void showRessources() {
+        for (Building building : buildings) {
+            building.showRessources();
+        }
+
     }
 }

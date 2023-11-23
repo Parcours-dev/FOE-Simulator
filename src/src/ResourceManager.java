@@ -1,3 +1,4 @@
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -35,19 +36,21 @@ public class ResourceManager {
         if (resource.getQuantity() <= 0) {
             System.out.println("Tu n'as plus assez de : " + resource.getName());
         }
-        System.out.println(resource.getName() + " " + resource.getQuantity());
+        //System.out.println(resource.getName() + " " + resource.getQuantity());
+
     }
 
     public void produceResource(String name, int quantity) {
         Resource resource = resources.get(name);
         resource.setQuantity(resource.getQuantity() + quantity);
-        System.out.println(resource.getName() + " " + resource.getQuantity());
     }
 
-    @Override
-    public String toString() {
-        return "ResourceManager{" +
-                "resources=" + resources +
-                '}';
+    public void showRessource() {
+        for (Map.Entry<String, Resource> entry : resources.entrySet()) {
+            String resourceName = entry.getKey();
+            int amount = entry.getValue().getQuantity();
+            System.out.println(resourceName + " : " + amount);
+        }
+
     }
 }

@@ -1,4 +1,5 @@
 import java.time.format.ResolverStyle;
+import java.util.Map;
 
 public class Main {
     public static void main(String[] args) {
@@ -17,10 +18,14 @@ public class Main {
             // Pause pour simuler le temps réel
             try {
                 Thread.sleep(1000);
-
+                manager.showRessources();
+                System.out.print("\033[H\033[2J");
+                System.out.flush();
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
+
+
     }
 }

@@ -1,19 +1,17 @@
 public class Maison extends Building {
     public Maison() {
-            this.population = 0;
-            this.resourceCosts.put("Nourriture", 20);
-            this.resourceCosts.put("Bois", 100);
-            this.resourceCosts.put("Pierre", 30);
-            this.resourceCosts.put("Fer", 20);
-        }
+        this.population = 0;
+        this.resourceCosts.put("Nourriture", 50);
+        this.resourceCosts.put("Bois", 30);
+        this.resourceCosts.put("Pierre", 20);
+        this.resourceCosts.put("Fer", 30);
 
-    @Override
-    public void consumeResources() {
+        this.resourceConsumption.put("Nourriture", 10);
+        this.resourceConsumption.put("Bois", 5);
+        this.resourceConsumption.put("Pierre", 5);
+        this.resourceConsumption.put("Fer", 5);
 
-    }
-
-    @Override
-    public void produceResources() {
+        this.resourceProduction.put("Nourriture", 50);
 
     }
 }
