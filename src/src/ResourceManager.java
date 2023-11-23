@@ -31,9 +31,17 @@ public class ResourceManager {
 
     public void consumeResource(String name, int quantity) {
         Resource resource = resources.get(name);
-        if (resource != null) {
-            resource.setQuantity(resource.getQuantity() - quantity);
+        resource.setQuantity(resource.getQuantity() - quantity);
+        if (resource.getQuantity() <= 0) {
+            System.out.println("Tu n'as plus assez de : " + resource.getName());
         }
+        System.out.println(resource.getName() + " " + resource.getQuantity());
+    }
+
+    public void produceResource(String name, int quantity) {
+        Resource resource = resources.get(name);
+        resource.setQuantity(resource.getQuantity() + quantity);
+        System.out.println(resource.getName() + " " + resource.getQuantity());
     }
 
     @Override

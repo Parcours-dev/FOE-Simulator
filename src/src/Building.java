@@ -24,7 +24,10 @@ public abstract class Building {
     public void consumeResources() {
         ResourceManager resourceManager = ResourceManager.getInstance();
         for (Map.Entry<String, Integer> entry : resourceConsumption.entrySet()) {
-            resourceManager.consumeResource(entry.getKey(), entry.getValue());
+            String resourceName = entry.getKey();
+            int consumptionAmount = entry.getValue();
+
+            resourceManager.consumeResource(resourceName, consumptionAmount);
         }
     }
 
@@ -32,10 +35,10 @@ public abstract class Building {
     public void produceResources() {
         ResourceManager resourceManager = ResourceManager.getInstance();
         for (Map.Entry<String, Integer> entry : resourceProduction.entrySet()) {
-            Resource resource = resourceManager.getResource(entry.getKey());
-            if (resource != null) {
-                resource.setQuantity(resource.getQuantity() + entry.getValue());
-            }
+            String resourceName = entry.getKey();
+            int productionAmount = entry.getValue();
+
+            resourceManager.produceResource(resourceName, productionAmount);
         }
     }
 
