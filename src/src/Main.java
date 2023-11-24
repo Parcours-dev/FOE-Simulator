@@ -14,11 +14,12 @@ public class Main {
 
         while (true) {
             manager.manageResources();
-            manager.showRessources();
-
             // Pause pour simuler le temps réel
             try {
-                Thread.sleep(1000);
+                Thread.sleep(2000);
+                System.out.println(ferme.isBuilt);
+                manager.showRessources();
+
 
             } catch (InterruptedException e) {
                 e.printStackTrace();

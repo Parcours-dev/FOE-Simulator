@@ -1,12 +1,17 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public abstract class Building {
     protected int population;
+    protected int tConstruction;
+    protected boolean isBuilt = false;
     protected Map<String, Integer> resourceCosts;
     protected Map<String, Integer> resourceConsumption;
     protected Map<String, Integer> resourceProduction;
 
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
     public Building() {
         resourceCosts = new HashMap<>();
         resourceConsumption = new HashMap<>();
@@ -14,31 +19,44 @@ public abstract class Building {
     }
 
     public void build() {
-        ResourceManager resourceManager = ResourceManager.getInstance();
-        for (Map.Entry<String, Integer> entry : resourceCosts.entrySet()) {
-            resourceManager.consumeResource(entry.getKey(), entry.getValue());
-        }
+        executorService.submit(() -> {
+            ResourceManager resourceManager = ResourceManager.getInstance();
+            for (Map.Entry<String, Integer> entry : resourceCosts.entrySet()) {
+                resourceManager.consumeResource(entry.getKey(), entry.getValue());
+            }
+            try {
+                // Simuler le temps de construction en mettant le thread en sommeil
+                Thread.sleep(tConstruction); // Pause pour 5 secondes
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            isBuilt = true;
+        });
     }
 
 
     public void consumeResources() {
-        ResourceManager resourceManager = ResourceManager.getInstance();
-        for (Map.Entry<String, Integer> entry : resourceConsumption.entrySet()) {
-            String resourceName = entry.getKey();
-            int consumptionAmount = entry.getValue();
+        if(isBuilt) {
+            ResourceManager resourceManager = ResourceManager.getInstance();
+            for (Map.Entry<String, Integer> entry : resourceConsumption.entrySet()) {
+                String resourceName = entry.getKey();
+                int consumptionAmount = entry.getValue();
 
-            resourceManager.consumeResource(resourceName, consumptionAmount);
+                resourceManager.consumeResource(resourceName, consumptionAmount);
+            }
         }
     }
 
 
     public void produceResources() {
-        ResourceManager resourceManager = ResourceManager.getInstance();
-        for (Map.Entry<String, Integer> entry : resourceProduction.entrySet()) {
-            String resourceName = entry.getKey();
-            int productionAmount = entry.getValue();
+        if(isBuilt) {
+            ResourceManager resourceManager = ResourceManager.getInstance();
+            for (Map.Entry<String, Integer> entry : resourceProduction.entrySet()) {
+                String resourceName = entry.getKey();
+                int productionAmount = entry.getValue();
 
-            resourceManager.produceResource(resourceName, productionAmount);
+                resourceManager.produceResource(resourceName, productionAmount);
+            }
         }
     }
 

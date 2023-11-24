@@ -5,9 +5,9 @@ public class BuildingFactory {
                 return new Maison();
             case "Ferme":
                 return new Ferme();
-            /*case "Caserne":
+            case "Caserne":
                 return new Caserne();
-            case "Carrière":
+            /*case "Carrière":
                 return new Carrière();
             case "Mine":
                 return new Mine();

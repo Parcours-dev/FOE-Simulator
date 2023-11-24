@@ -19,6 +19,7 @@ public class Manager {
 
     public void manageResources() {
         for (Building building : buildings) {
+            building.build();
             building.consumeResources();
             building.produceResources();
         }
