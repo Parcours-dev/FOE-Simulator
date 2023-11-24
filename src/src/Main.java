@@ -14,13 +14,12 @@ public class Main {
 
         while (true) {
             manager.manageResources();
+            manager.showRessources();
 
             // Pause pour simuler le temps réel
             try {
                 Thread.sleep(1000);
-                manager.showRessources();
-                System.out.print("\033[H\033[2J");
-                System.out.flush();
+
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

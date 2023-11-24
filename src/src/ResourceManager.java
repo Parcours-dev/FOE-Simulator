@@ -13,8 +13,8 @@ public class ResourceManager {
         resources.put("Bois", new Resource("Bois", 400));
         resources.put("Pierre", new Resource("Pierre", 400));
         resources.put("Charbon", new Resource("Charbon", 400));
-        resources.put("Fer", new Resource("Fer", 400));
-        resources.put("Acier", new Resource("Acier", 400));
+        resources.put("Fer", new Resource("Fer", 200));
+        resources.put("Acier", new Resource("Acier", 150));
 
         // Ajouter d'autres ressources ici
     }
@@ -36,7 +36,7 @@ public class ResourceManager {
         if (resource.getQuantity() <= 0) {
             System.out.println("Tu n'as plus assez de : " + resource.getName());
         }
-        //System.out.println(resource.getName() + " " + resource.getQuantity());
+
 
     }
 

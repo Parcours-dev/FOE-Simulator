@@ -1,7 +1,7 @@
-public class Ferme extends Building {
-    public Ferme() {
+public class Caserne extends Building {
+    public Caserne() {
         this.population = 0;
-        this.resourceCosts.put("Nourriture", 50);
+        this.resourceCosts.put("Nourriture", 40);
         this.resourceCosts.put("Bois", 30);
         this.resourceCosts.put("Pierre", 20);
         this.resourceCosts.put("Fer", 30);
