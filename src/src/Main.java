@@ -16,7 +16,7 @@ public class Main {
             manager.manageResources();
             // Pause pour simuler le temps réel
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
                 System.out.println(ferme.isBuilt);
                 manager.showRessources();
 
