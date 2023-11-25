@@ -10,7 +10,7 @@ public class Main {
         Building ferme = BuildingFactory.createBuilding("Ferme");
         manager.addBuilding(ferme);
 
-
+//test
 
         while (true) {
             manager.manageResources();
