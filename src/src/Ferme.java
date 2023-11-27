@@ -2,7 +2,7 @@ public class Ferme extends Building {
     public Ferme() {
         this.population = 0;
         this.populationLimit = 10;
-        this.tConstruction = 5000;
+        this.tConstruction = 2000;
 
         this.resourceCosts.put("Nourriture", 50);
         this.resourceCosts.put("Bois", 30);

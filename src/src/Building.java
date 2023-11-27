@@ -31,14 +31,15 @@ public abstract class Building {
                 }
             }
             try {
-                // Simuler le temps de construction en mettant le thread en sommeil
                 Thread.sleep(tConstruction); // Pause pour 5 secondes
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
             isBuilt = true;
-        });
-    }
+
+            });
+        }
+
 
 
 
