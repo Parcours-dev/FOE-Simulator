@@ -20,9 +20,11 @@ public class Manager {
     public void manageResources() {
         for (Building building : buildings) {
             building.consumeResources();
+            building.populationConsumption();
             building.produceResources();
         }
     }
+
 
     public void buildBuilding() {
         for (Building building : buildings) {

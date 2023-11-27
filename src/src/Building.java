@@ -58,6 +58,20 @@ public abstract class Building {
         }
     }
 
+    public void populationConsumption(){
+        final int consoDaily = 2;
+        ResourceManager resourceManager = ResourceManager.getInstance();
+        Resource populationResource = resourceManager.getResource("Population");
+        int population = populationResource.getQuantity();
+
+        // Calculer la consommation totale de nourriture
+        int totalFoodConsumption = population * consoDaily;
+
+        // Consommer la nourriture
+        resourceManager.consumeResource("Nourriture", totalFoodConsumption);
+    }
+
+
 
     public void produceResources() {
         if(isBuilt) {

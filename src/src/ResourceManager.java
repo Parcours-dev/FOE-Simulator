@@ -1,9 +1,12 @@
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ResourceManager {
     private static ResourceManager instance;
     private Map<String, Resource> resources;
+
 
     private ResourceManager() {
         resources = new HashMap<>();
@@ -13,6 +16,9 @@ public class ResourceManager {
         resources.put("Charbon", new Resource("Charbon", 400));
         resources.put("Fer", new Resource("Fer", 200));
         resources.put("Acier", new Resource("Acier", 150));
+
+        resources.put("Population", new Resource("Population", 20));
+
 
         // Ajouter d'autres ressources ici
     }
@@ -44,6 +50,7 @@ public class ResourceManager {
     public void consumeResource(String name, int quantity) {
         Resource resource = resources.get(name);
         resource.setQuantity(resource.getQuantity() - quantity);
+
         if (resource.getQuantity() <= 0) {
             System.out.println("Tu n'as plus assez de : " + resource.getName() + "\nGame Over mon petit");
             System.exit(0);

@@ -11,8 +11,7 @@ public class Maison extends Building {
         this.resourceConsumption.put("Bois", 5);
         this.resourceConsumption.put("Nourriture", 15);
 
-
-        // Pas de production
+        this.resourceProduction.put("Population", 1);
 
     }
 }
