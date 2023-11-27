@@ -34,7 +34,8 @@ public class ResourceManager {
         Resource resource = resources.get(name);
         resource.setQuantity(resource.getQuantity() - quantity);
         if (resource.getQuantity() <= 0) {
-            System.out.println("Tu n'as plus assez de : " + resource.getName());
+            System.out.println("Tu n'as plus assez de : " + resource.getName() + "\nGame Over mon petit");
+            System.exit(0);
         }
 
 

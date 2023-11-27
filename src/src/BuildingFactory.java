@@ -7,13 +7,13 @@ public class BuildingFactory {
                 return new Ferme();
             case "Caserne":
                 return new Caserne();
-            /*case "Carrière":
+            case "Carrière":
                 return new Carrière();
             case "Mine":
                 return new Mine();
             case "Scierie":
                 return new Scierie();
-            case "Forge":
+            /*case "Forge":
                 return new Forge();
             case "Académie":
                 return new Academie();*/

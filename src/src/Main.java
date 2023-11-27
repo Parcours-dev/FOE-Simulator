@@ -10,7 +10,9 @@ public class Main {
         Building ferme = BuildingFactory.createBuilding("Ferme");
         manager.addBuilding(ferme);
 
-//test
+        Building maison = BuildingFactory.createBuilding("Maison");
+        manager.addBuilding(maison);
+
 
         while (true) {
             manager.manageResources();
@@ -18,7 +20,9 @@ public class Main {
             try {
                 Thread.sleep(1000);
                 System.out.println(ferme.isBuilt);
-                manager.showRessources();
+                System.out.println(maison.isBuilt);
+
+                //manager.showRessources();
 
 
             } catch (InterruptedException e) {
