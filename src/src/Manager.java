@@ -5,6 +5,8 @@ import java.util.Map;
 public class Manager {
     private List<Building> buildings;
 
+    private Building building;
+
     public Manager() {
         buildings = new ArrayList<>();
     }
@@ -19,8 +21,8 @@ public class Manager {
 
     public void manageResources() {
         for (Building building : buildings) {
-            building.consumeResources();
             building.populationConsumption();
+            building.consumeResources();
             building.produceResources();
         }
     }

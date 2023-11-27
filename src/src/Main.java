@@ -10,7 +10,11 @@ public class Main {
         manager.addBuilding(ferme);
         ferme.addInhabitant(10);
         ferme.build();
-
+        /*
+        Building maison = BuildingFactory.createBuilding("Maison");
+        manager.addBuilding(maison);
+        maison.addInhabitant(10);
+        maison.build();*/
 
 
         while (true) {

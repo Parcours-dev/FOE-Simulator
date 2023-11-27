@@ -1,5 +1,6 @@
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Supplier;
 
 public class BuildingFactory {
@@ -19,5 +20,9 @@ public class BuildingFactory {
         Supplier<Building> constructor = map.get(type);
 
         return constructor != null ? constructor.get() : null;
+    }
+
+    public static Set<String> getBuildingTypes() {
+        return map.keySet();
     }
 }
