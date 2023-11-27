@@ -1,10 +1,18 @@
 public class Resource {
+    private static Resource instance;
     private String name;
     private int quantity;
 
-    public Resource(String name, int quantity) {
+    Resource(String name, int quantity) {
         this.name = name;
         this.quantity = quantity;
+    }
+
+    public static Resource getInstance(String name, int quantity) {
+        if (instance == null) {
+            instance = new Resource(name, quantity);
+        }
+        return instance;
     }
 
     public String getName() {

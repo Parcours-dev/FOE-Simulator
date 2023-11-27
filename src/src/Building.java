@@ -5,6 +5,7 @@ import java.util.concurrent.Executors;
 
 public abstract class Building {
     protected int population;
+    protected int populationLimit;
     protected int tConstruction;
     protected boolean isBuilt = false;
     protected Map<String, Integer> resourceCosts;
@@ -22,7 +23,12 @@ public abstract class Building {
         executorService.submit(() -> {
             ResourceManager resourceManager = ResourceManager.getInstance();
             for (Map.Entry<String, Integer> entry : resourceCosts.entrySet()) {
-                resourceManager.consumeResource(entry.getKey(), entry.getValue());
+                Resource resource = resourceManager.getResource(entry.getKey());
+                if (resource != null) {
+                    resourceManager.consumeResource(entry.getKey(), entry.getValue());
+                } else {
+                    System.out.println("La ressource " + entry.getKey() + " n'existe pas.");
+                }
             }
             try {
                 // Simuler le temps de construction en mettant le thread en sommeil
@@ -35,6 +41,7 @@ public abstract class Building {
     }
 
 
+
     public void consumeResources() {
         if(isBuilt) {
             ResourceManager resourceManager = ResourceManager.getInstance();
@@ -42,7 +49,10 @@ public abstract class Building {
                 String resourceName = entry.getKey();
                 int consumptionAmount = entry.getValue();
 
-                resourceManager.consumeResource(resourceName, consumptionAmount);
+                // Calculer la consommation proportionnelle à la population
+                int proportionalConsumption = (int) ((double) population / populationLimit * consumptionAmount);
+
+                resourceManager.consumeResource(resourceName, proportionalConsumption);
             }
         }
     }
@@ -55,10 +65,15 @@ public abstract class Building {
                 String resourceName = entry.getKey();
                 int productionAmount = entry.getValue();
 
-                resourceManager.produceResource(resourceName, productionAmount);
+                // Calculer la consommation proportionnelle à la population
+                int proportionalProduction = (int) ((double) population / populationLimit * productionAmount);
+
+
+                resourceManager.produceResource(resourceName, proportionalProduction);
             }
         }
     }
+
 
 
     public void showRessources(){
@@ -97,4 +112,29 @@ public abstract class Building {
     public void setResourceProduction(Map<String, Integer> resourceProduction) {
         this.resourceProduction = resourceProduction;
     }
+
+    public void addInhabitant(int habitantNumber) {
+        if (this.population < this.populationLimit) {
+            this.population = this.population+ habitantNumber;
+        } else {
+            System.out.println("La limite de population a été atteinte. Impossible d'ajouter un habitant.");
+        }
+    }
+
+    public void removeInhabitant(int habitantNumber) {
+        if (this.population > 0) {
+            this.population = this.population - habitantNumber;
+        } else {
+            System.out.println("Il n'y a pas d'habitants à supprimer.");
+        }
+    }
+
+    public int getPopulationLimit() {
+        return populationLimit;
+    }
+
+    public void setPopulationLimit(int populationLimit) {
+        this.populationLimit = populationLimit;
+    }
+
 }

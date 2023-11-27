@@ -1,13 +1,11 @@
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-// Classe ResourceManager
 public class ResourceManager {
     private static ResourceManager instance;
     private Map<String, Resource> resources;
 
-    ResourceManager() {
+    private ResourceManager() {
         resources = new HashMap<>();
         resources.put("Nourriture", new Resource("Nourriture", 400));
         resources.put("Bois", new Resource("Bois", 400));
@@ -18,6 +16,7 @@ public class ResourceManager {
 
         // Ajouter d'autres ressources ici
     }
+
 
     public static ResourceManager getInstance() {
         if (instance == null) {
@@ -30,6 +29,18 @@ public class ResourceManager {
         return resources.get(name);
     }
 
+    public static void setInstance(ResourceManager instance) {
+        ResourceManager.instance = instance;
+    }
+
+    public Map<String, Resource> getResources() {
+        return resources;
+    }
+
+    public void setResources(Map<String, Resource> resources) {
+        this.resources = resources;
+    }
+
     public void consumeResource(String name, int quantity) {
         Resource resource = resources.get(name);
         resource.setQuantity(resource.getQuantity() - quantity);
@@ -37,7 +48,6 @@ public class ResourceManager {
             System.out.println("Tu n'as plus assez de : " + resource.getName() + "\nGame Over mon petit");
             System.exit(0);
         }
-
 
     }
 
@@ -54,4 +64,7 @@ public class ResourceManager {
         }
 
     }
+
+
+
 }
