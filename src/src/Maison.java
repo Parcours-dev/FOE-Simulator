@@ -4,6 +4,7 @@ public class Maison extends Building {
         this.populationLimit = 10;
 
         this.tConstruction = 3000;
+
         this.resourceCosts.put("Nourriture", 40);
         this.resourceCosts.put("Bois", 20);
         this.resourceCosts.put("Pierre", 10);

@@ -45,4 +45,8 @@ public class Manager {
         }
 
     }
+
+    public List<Building> getBuildings() {
+        return buildings;
+    }
 }

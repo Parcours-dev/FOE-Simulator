@@ -12,11 +12,22 @@ public class GameInterface extends JFrame {
     private Map<String, Resource> resources;
     private static Map<String, JLabel> resourceLabels;
 
+
     public GameInterface() {
         setTitle("FOE V2 - La concu de Rise of Kingdom");
         setSize(1300, 600);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
+
+        Map<String, ImageIcon> buildingIcons = new HashMap<>();
+        buildingIcons.put("Maison", new ImageIcon(getClass().getResource("/image/maison.png")));
+        buildingIcons.put("Ferme", new ImageIcon(getClass().getResource("/image/ferme.png")));
+        buildingIcons.put("Caserne", new ImageIcon(getClass().getResource("/image/caserne.png")));
+        buildingIcons.put("Carrière", new ImageIcon(getClass().getResource("/image/carriere.png")));
+        buildingIcons.put("Mine", new ImageIcon(getClass().getResource("/image/mine.png")));
+        buildingIcons.put("Scierie", new ImageIcon(getClass().getResource("/image/scierie.png")));
+        buildingIcons.put("Forge", new ImageIcon(getClass().getResource("/image/forge.png")));
+
 
         buildingsPanel = new JPanel();
         gridPanel = new JPanel();
@@ -47,14 +58,21 @@ public class GameInterface extends JFrame {
             gridButton.setBorderPainted(true);
             gridButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
             gridButton.addActionListener(e -> {
-                if (selectedBuilding.get() != null && gridButton.getBackground().equals(new JButton().getBackground())) {
-                    System.out.println("Un vrai Portugais ! " + selectedBuilding.get() + " est sur le terrain :)");
-                    gridButton.setBackground(buildingColors.get(selectedBuilding.get()));
-                    gridButton.repaint();
+                if (selectedBuilding.get() != null && gridButton.getIcon() == null) {
+                    System.out.println(" " + selectedBuilding.get() + " est sur le terrain :)");
+                    ImageIcon originalIcon = buildingIcons.get(selectedBuilding.get());
+                    Image scaledImage = originalIcon.getImage().getScaledInstance(gridButton.getWidth(), gridButton.getHeight(), Image.SCALE_DEFAULT);
+                    gridButton.setIcon(new ImageIcon(scaledImage));
+                } else if (gridButton.getIcon() != null) {
+                    System.out.println("Le building a été enlevé du terrain.");
+                    gridButton.setIcon(null);
                 }
             });
+
             gridPanel.add(gridButton);
         }
+
+
 
         resourcesPanel = new JPanel();
         add(resourcesPanel, BorderLayout.NORTH);
@@ -88,4 +106,7 @@ public class GameInterface extends JFrame {
         SwingUtilities.invokeLater(() -> new GameInterface().setVisible(true));
 
     }
+
+
+
 }

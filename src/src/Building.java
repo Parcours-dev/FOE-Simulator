@@ -31,7 +31,7 @@ public abstract class Building {
                 }
             }
             try {
-                Thread.sleep(tConstruction); // Pause pour 5 secondes
+                Thread.sleep(tConstruction);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
@@ -59,7 +59,7 @@ public abstract class Building {
     }
 
     public void populationConsumption(){
-        final int consoDaily = 2;
+        final int consoDaily = 1;
         ResourceManager resourceManager = ResourceManager.getInstance();
         Resource populationResource = resourceManager.getResource("Population");
         int population = populationResource.getQuantity();
@@ -113,7 +113,18 @@ public abstract class Building {
     }
 
     public Map<String, Integer> getResourceConsumption() {
-        return resourceConsumption;
+        Map<String, Integer> proportionalConsumption = new HashMap<>();
+        if (isBuilt) {
+            for (Map.Entry<String, Integer> entry : resourceConsumption.entrySet()) {
+                String resourceName = entry.getKey();
+                int consumptionAmount = entry.getValue();
+
+                // Calculer la consommation proportionnelle à la population
+                int proportionalAmount = (int) ((double) population / populationLimit * consumptionAmount);
+                proportionalConsumption.put(resourceName, proportionalAmount);
+            }
+        }
+        return proportionalConsumption;
     }
 
     public void setResourceConsumption(Map<String, Integer> resourceConsumption) {
@@ -121,7 +132,18 @@ public abstract class Building {
     }
 
     public Map<String, Integer> getResourceProduction() {
-        return resourceProduction;
+        Map<String, Integer> proportionalProduction = new HashMap<>();
+        if (isBuilt) {
+            for (Map.Entry<String, Integer> entry : resourceProduction.entrySet()) {
+                String resourceName = entry.getKey();
+                int productionAmount = entry.getValue();
+
+                // Calculer la production proportionnelle à la population
+                int proportionalAmount = (int) ((double) population / populationLimit * productionAmount);
+                proportionalProduction.put(resourceName, proportionalAmount);
+            }
+        }
+        return proportionalProduction;
     }
 
     public void setResourceProduction(Map<String, Integer> resourceProduction) {

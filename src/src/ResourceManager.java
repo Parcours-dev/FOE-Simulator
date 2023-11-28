@@ -71,6 +71,5 @@ public class ResourceManager {
             System.out.println(resourceName + " : " + amount);
         }
 
-
     }
 }
