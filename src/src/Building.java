@@ -1,101 +1,101 @@
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public abstract class Building {
+public abstract class Building implements Observable, Observer {
+    private static final int CONSO_DAILY = 1;
+
+    // Propriétés de base du bâtiment
     protected int population;
     protected int populationLimit;
     protected int tConstruction;
     protected boolean isBuilt = false;
-    protected Map<String, Integer> resourceCosts;
-    protected Map<String, Integer> resourceConsumption;
-    protected Map<String, Integer> resourceProduction;
 
+    // Coûts, consommations et productions de ressources
+    protected Map<String, Integer> resourceCosts = new HashMap<>();
+    protected Map<String, Integer> resourceConsumption = new HashMap<>();
+    protected Map<String, Integer> resourceProduction = new HashMap<>();
+
+    // ExecutorService pour gérer les threads
     private ExecutorService executorService = Executors.newSingleThreadExecutor();
+
+    // Liste des observateurs
+    private List<Observer> observers = new ArrayList<>();
+
+    // Constructeur
     public Building() {
-        resourceCosts = new HashMap<>();
-        resourceConsumption = new HashMap<>();
-        resourceProduction = new HashMap<>();
+        // L'initialisation a été déplacée à la déclaration des champs
     }
 
+    // Méthode pour construire le bâtiment de manière asynchrone
     public void build() {
         executorService.submit(() -> {
             ResourceManager resourceManager = ResourceManager.getInstance();
-            for (Map.Entry<String, Integer> entry : resourceCosts.entrySet()) {
-                Resource resource = resourceManager.getResource(entry.getKey());
-                if (resource != null) {
-                    resourceManager.consumeResource(entry.getKey(), entry.getValue());
-                } else {
-                    System.out.println("La ressource " + entry.getKey() + " n'existe pas.");
-                }
-            }
-            try {
-                Thread.sleep(tConstruction);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            handleResourceCosts(resourceManager);
+            sleep(tConstruction);
             isBuilt = true;
+            notifyObservers();
+        });
+    }
 
-            });
-        }
-
-
-
-
-    public void consumeResources() {
-        if(isBuilt) {
-            ResourceManager resourceManager = ResourceManager.getInstance();
-            for (Map.Entry<String, Integer> entry : resourceConsumption.entrySet()) {
-                String resourceName = entry.getKey();
-                int consumptionAmount = entry.getValue();
-
-                // Calculer la consommation proportionnelle à la population
-                int proportionalConsumption = (int) ((double) population / populationLimit * consumptionAmount);
-
-                resourceManager.consumeResource(resourceName, proportionalConsumption);
+    // Méthode privée pour gérer les coûts de ressources lors de la construction
+    private void handleResourceCosts(ResourceManager resourceManager) {
+        resourceCosts.forEach((resourceName, amount) -> {
+            Resource resource = resourceManager.getResource(resourceName);
+            if (resource != null) {
+                resourceManager.consumeResource(resourceName, amount);
+            } else {
+                System.out.println("La ressource " + resourceName + " n'existe pas.");
             }
+        });
+    }
+
+    // Méthode privée pour mettre en pause le thread pendant une durée spécifiée
+    private void sleep(int duration) {
+        try {
+            Thread.sleep(duration);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
         }
     }
 
-    public void populationConsumption(){
-        final int consoDaily = 1;
+    // Méthode pour consommer les ressources en fonction de la population
+    public void consumeResources() {
+        if (isBuilt) {
+            ResourceManager resourceManager = ResourceManager.getInstance();
+            resourceConsumption.forEach((resourceName, consumptionAmount) -> {
+                int proportionalConsumption = (int) ((double) population / populationLimit * consumptionAmount);
+                resourceManager.consumeResource(resourceName, proportionalConsumption);
+            });
+            notifyObservers();
+        }
+    }
+
+    // Méthode pour la consommation quotidienne de la population
+    public void populationConsumption() {
         ResourceManager resourceManager = ResourceManager.getInstance();
-        Resource populationResource = resourceManager.getResource("Population");
-        int population = populationResource.getQuantity();
-
-        // Calculer la consommation totale de nourriture
-        int totalFoodConsumption = population * consoDaily;
-
-        // Consommer la nourriture
+        int totalFoodConsumption = population * CONSO_DAILY;
         resourceManager.consumeResource("Nourriture", totalFoodConsumption);
     }
 
-
-
+    // Méthode pour produire des ressources en fonction de la population
     public void produceResources() {
-        if(isBuilt) {
+        if (isBuilt) {
             ResourceManager resourceManager = ResourceManager.getInstance();
-            for (Map.Entry<String, Integer> entry : resourceProduction.entrySet()) {
-                String resourceName = entry.getKey();
-                int productionAmount = entry.getValue();
-
-                // Calculer la consommation proportionnelle à la population
+            resourceProduction.forEach((resourceName, productionAmount) -> {
                 int proportionalProduction = (int) ((double) population / populationLimit * productionAmount);
-
-
                 resourceManager.produceResource(resourceName, proportionalProduction);
-            }
+            });
         }
     }
 
-
-
-    public void showRessources(){
+    // Méthode pour afficher les ressources
+    public void showResources() {
         ResourceManager resourceManager = ResourceManager.getInstance();
-        resourceManager.showRessource();
+        resourceManager.showResource();
     }
 
+    // Getter et Setter pour la population
     public int getPopulation() {
         return population;
     }
@@ -104,6 +104,7 @@ public abstract class Building {
         this.population = population;
     }
 
+    // Getter et Setter pour les coûts de ressources
     public Map<String, Integer> getResourceCosts() {
         return resourceCosts;
     }
@@ -112,6 +113,7 @@ public abstract class Building {
         this.resourceCosts = resourceCosts;
     }
 
+    // Getter et Setter pour la consommation de ressources
     public Map<String, Integer> getResourceConsumption() {
         Map<String, Integer> proportionalConsumption = new HashMap<>();
         if (isBuilt) {
@@ -131,6 +133,7 @@ public abstract class Building {
         this.resourceConsumption = resourceConsumption;
     }
 
+    // Getter et Setter pour la production de ressources
     public Map<String, Integer> getResourceProduction() {
         Map<String, Integer> proportionalProduction = new HashMap<>();
         if (isBuilt) {
@@ -150,22 +153,40 @@ public abstract class Building {
         this.resourceProduction = resourceProduction;
     }
 
+    // Méthode pour ajouter un habitant
     public void addInhabitant(int habitantNumber) {
-        if (this.population < this.populationLimit) {
-            this.population = this.population+ habitantNumber;
+        int availablePopulation = ResourceManager.getInstance().getAvailablePopulation();
+
+        if (habitantNumber > 0) {
+            if (habitantNumber <= availablePopulation) {
+                this.population += habitantNumber;
+                ResourceManager.getInstance().consumeResource("Population", habitantNumber);
+                ResourceManager.getInstance().setAvailablePopulation(availablePopulation - habitantNumber);
+            } else {
+                System.out.println("Il n'y a pas assez d'habitants disponibles dans la ville.");
+            }
         } else {
-            System.out.println("La limite de population a été atteinte. Impossible d'ajouter un habitant.");
+            System.out.println("Veuillez entrer un nombre d'habitants positif.");
         }
     }
 
+
+    // Méthode pour supprimer un habitant
     public void removeInhabitant(int habitantNumber) {
-        if (this.population > 0) {
-            this.population = this.population - habitantNumber;
+        if (habitantNumber > 0) {
+            int remainingPopulation = this.population - habitantNumber;
+            if (remainingPopulation >= 0) {
+                this.population = remainingPopulation;
+            } else {
+                System.out.println("Il n'y a pas suffisamment d'habitants à supprimer.");
+            }
         } else {
-            System.out.println("Il n'y a pas d'habitants à supprimer.");
+            System.out.println("Veuillez entrer un nombre d'habitants positif.");
         }
     }
 
+
+    // Getter et Setter pour la limite de population
     public int getPopulationLimit() {
         return populationLimit;
     }
@@ -174,4 +195,28 @@ public abstract class Building {
         this.populationLimit = populationLimit;
     }
 
+    // Méthode abstraite pour obtenir le type de bâtiment
+    public abstract String getType();
+
+    // Implémentation des méthodes de l'interface Observable
+    @Override
+    public void addObserver(Observer observer) {
+        observers.add(observer);
+    }
+
+    @Override
+    public void removeObserver(Observer observer) {
+        observers.remove(observer);
+    }
+
+    @Override
+    public void notifyObservers() {
+        observers.forEach(Observer::update);
+    }
+
+    // Implémentation de la méthode de l'interface Observer
+    @Override
+    public void update() {
+        // Logique à exécuter en réponse à une mise à jour du manager
+    }
 }
