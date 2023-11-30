@@ -1,7 +1,5 @@
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
+
 
 public class Manager implements Observer, Observable {
     // Liste des bâtiments gérés par le manager
@@ -100,21 +98,29 @@ public class Manager implements Observer, Observable {
         }
 
         // Demandez à l'utilisateur de choisir un indice
-        System.out.print("Entrez le numéro du bâtiment : ");
-        int buildingIndex = scanner.nextInt();
+        try {
+            System.out.print("Entrez le numéro du bâtiment : ");
+            int buildingIndex = scanner.nextInt();
 
-        // Vérifiez si l'indice est valide
-        if (buildingIndex >= 1 && buildingIndex <= buildingTypes.size()) {
-            // Obtenez le type de bâtiment correspondant à l'indice
-            String buildingType = buildingTypes.get(buildingIndex - 1);
+            // Vérifiez si l'indice est valide
+            if (buildingIndex >= 1 && buildingIndex <= buildingTypes.size()) {
+                // Obtenez le type de bâtiment correspondant à l'indice
+                String buildingType = buildingTypes.get(buildingIndex - 1);
 
-            // Créez et exécutez la commande pour ajouter le bâtiment
-            Command addBuildingCommand = new AddBuildingCommand(manager, buildingType);
-            addBuildingCommand.execute();
-        } else {
-            System.out.println("Indice de bâtiment invalide.");
+                // Créez et exécutez la commande pour ajouter le bâtiment
+                Command addBuildingCommand = new AddBuildingCommand(manager, buildingType);
+                addBuildingCommand.execute();
+            } else {
+                throw new GameExceptions.InvalidBuildingIndexException();
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Veuillez entrer un nombre valide.");
+            scanner.nextLine(); // Pour consommer la nouvelle ligne restante
+        } catch (GameExceptions.InvalidBuildingIndexException e) {
+            System.out.println(e.getMessage());
         }
     }
+
 
     // Méthode pour vérifier si un indice de bâtiment est valide
     private static boolean isValidBuildingIndex(Manager manager, int index) {
@@ -125,13 +131,22 @@ public class Manager implements Observer, Observable {
     static void destroyBuilding(Manager manager, Scanner scanner) {
         System.out.println("Choisissez un bâtiment à détruire : ");
         manager.showBuildings();
-        int buildingIndexToRemove = scanner.nextInt();
-        if (isValidBuildingIndex(manager, buildingIndexToRemove)) {
-            Building buildingToRemove = manager.getBuildings().get(buildingIndexToRemove - 1);
-            Command removeBuildingCommand = new RemoveBuildingCommand(manager, buildingToRemove);
-            removeBuildingCommand.execute();
-        } else {
-            System.out.println("Indice de bâtiment invalide.");
+
+        try {
+            int buildingIndexToRemove = scanner.nextInt();
+
+            if (isValidBuildingIndex(manager, buildingIndexToRemove)) {
+                Building buildingToRemove = manager.getBuildings().get(buildingIndexToRemove - 1);
+                Command removeBuildingCommand = new RemoveBuildingCommand(manager, buildingToRemove);
+                removeBuildingCommand.execute();
+            } else {
+                throw new GameExceptions.InvalidBuildingIndexException();
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Veuillez entrer un nombre valide.");
+            scanner.nextLine(); // Pour consommer la nouvelle ligne restante
+        } catch (GameExceptions.InvalidBuildingIndexException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -139,15 +154,37 @@ public class Manager implements Observer, Observable {
     static void addInhabitant(Manager manager, Scanner scanner) {
         System.out.println("Choisissez un bâtiment pour ajouter un habitant : ");
         manager.showBuildings();
-        int buildingIndexToAddInhabitant = scanner.nextInt();
-        if (isValidBuildingIndex(manager, buildingIndexToAddInhabitant)) {
-            Building buildingToAddInhabitant = manager.getBuildings().get(buildingIndexToAddInhabitant - 1);
-            System.out.println("Nombre d'habitants à ajouter : ");
-            int inhabitantsToAdd = scanner.nextInt();
-            Command addInhabitantCommand = new AddInhabitantCommand(buildingToAddInhabitant, inhabitantsToAdd);
-            addInhabitantCommand.execute();
-        } else {
-            System.out.println("Indice de bâtiment invalide.");
+
+        try {
+            int buildingIndexToAddInhabitant = scanner.nextInt();
+
+            if (isValidBuildingIndex(manager, buildingIndexToAddInhabitant)) {
+                Building buildingToAddInhabitant = manager.getBuildings().get(buildingIndexToAddInhabitant - 1);
+                System.out.println("Nombre d'habitants à ajouter : ");
+
+                try {
+                    int inhabitantsToAdd = scanner.nextInt();
+
+                    if (inhabitantsToAdd >= 0) {
+                        Command addInhabitantCommand = new AddInhabitantCommand(buildingToAddInhabitant, inhabitantsToAdd);
+                        addInhabitantCommand.execute();
+                    } else {
+                        throw new GameExceptions.InvalidInhabitantCountException();
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Veuillez entrer un nombre valide.");
+                    scanner.nextLine(); // Pour consommer la nouvelle ligne restante
+                } catch (GameExceptions.InvalidInhabitantCountException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                throw new GameExceptions.InvalidBuildingIndexException();
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Veuillez entrer un nombre valide pour l'indice de bâtiment.");
+            scanner.nextLine(); // Pour consommer la nouvelle ligne restante
+        } catch (GameExceptions.InvalidBuildingIndexException e) {
+            System.out.println(e.getMessage());
         }
     }
 
@@ -155,15 +192,37 @@ public class Manager implements Observer, Observable {
     static void removeInhabitant(Manager manager, Scanner scanner) {
         System.out.println("Choisissez un bâtiment pour supprimer un habitant : ");
         manager.showBuildings();
-        int buildingIndexToRemoveInhabitant = scanner.nextInt();
-        if (isValidBuildingIndex(manager, buildingIndexToRemoveInhabitant)) {
-            Building buildingToRemoveInhabitant = manager.getBuildings().get(buildingIndexToRemoveInhabitant - 1);
-            System.out.println("Nombre d'habitants à supprimer : ");
-            int inhabitantsToRemove = scanner.nextInt();
-            Command removeInhabitantCommand = new RemoveInhabitantCommand(buildingToRemoveInhabitant, inhabitantsToRemove);
-            removeInhabitantCommand.execute();
-        } else {
-            System.out.println("Indice de bâtiment invalide.");
+
+        try {
+            int buildingIndexToRemoveInhabitant = scanner.nextInt();
+
+            if (isValidBuildingIndex(manager, buildingIndexToRemoveInhabitant)) {
+                Building buildingToRemoveInhabitant = manager.getBuildings().get(buildingIndexToRemoveInhabitant - 1);
+                System.out.println("Nombre d'habitants à supprimer : ");
+
+                try {
+                    int inhabitantsToRemove = scanner.nextInt();
+
+                    if (inhabitantsToRemove >= 0) {
+                        Command removeInhabitantCommand = new RemoveInhabitantCommand(buildingToRemoveInhabitant, inhabitantsToRemove);
+                        removeInhabitantCommand.execute();
+                    } else {
+                        throw new GameExceptions.InvalidInhabitantCountException();
+                    }
+                } catch (InputMismatchException e) {
+                    System.out.println("Veuillez entrer un nombre valide.");
+                    scanner.nextLine(); // Pour consommer la nouvelle ligne restante
+                } catch (GameExceptions.InvalidInhabitantCountException e) {
+                    System.out.println(e.getMessage());
+                }
+            } else {
+                throw new GameExceptions.InvalidBuildingIndexException();
+            }
+        } catch (InputMismatchException e) {
+            System.out.println("Veuillez entrer un nombre valide pour l'indice de bâtiment.");
+            scanner.nextLine(); // Pour consommer la nouvelle ligne restante
+        } catch (GameExceptions.InvalidBuildingIndexException e) {
+            System.out.println(e.getMessage());
         }
     }
 

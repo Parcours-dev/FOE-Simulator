@@ -21,32 +21,39 @@ public class Main {
         while (true) {
             Manager.printMenu();
 
-            int choice = scanner.nextInt();
+            try {
+                int choice = scanner.nextInt();
 
-            switch (choice) {
-                case 1:
-                    resourceManager.showResource();
-                    break;
-                case 2:
-                    Manager.chooseBuilding(manager, scanner);
-                    break;
-                case 3:
-                    Manager.destroyBuilding(manager, scanner);
-                    break;
-                case 4:
-                    Manager.addInhabitant(manager, scanner);
-                    break;
-                case 5:
-                    Manager.removeInhabitant(manager, scanner);
-                    break;
-                case 6:
-                    Manager.showBuildingList(manager);
-                    break;
-                case 0:
-                    Manager.exitGame();
-                    break;
-                default:
-                    System.out.println("Choix invalide.");
+                switch (choice) {
+                    case 1:
+                        resourceManager.showResource();
+                        break;
+                    case 2:
+                        Manager.chooseBuilding(manager, scanner);
+                        break;
+                    case 3:
+                        Manager.destroyBuilding(manager, scanner);
+                        break;
+                    case 4:
+                        Manager.addInhabitant(manager, scanner);
+                        break;
+                    case 5:
+                        Manager.removeInhabitant(manager, scanner);
+                        break;
+                    case 6:
+                        Manager.showBuildingList(manager);
+                        break;
+                    case 0:
+                        Manager.exitGame();
+                        break;
+                    default:
+                        throw new GameExceptions.MenuChoiceNotFoundException();
+                }
+            } catch (GameExceptions.MenuChoiceNotFoundException e) {
+                System.out.println(e.getMessage());
+            } catch (Exception e) {
+                System.out.println("Erreur lors de la saisie. Veuillez entrer une valeur valide.");
+                scanner.nextLine(); // Consommer la nouvelle ligne restante
             }
 
             sleep(1000);
