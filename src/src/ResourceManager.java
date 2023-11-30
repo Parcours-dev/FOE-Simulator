@@ -63,7 +63,7 @@ public class ResourceManager {
             resource.setQuantity(resource.getQuantity() - amount);
             if (resource.getQuantity() < 0) {
                 System.out.println("La quantité de " + resourceName + " est devenue négative.");
-                Main.gameOver();
+                Manager.gameOver();
             }
         } else {
             System.out.println("La ressource " + resourceName + " n'existe pas.");
@@ -95,15 +95,14 @@ public class ResourceManager {
         this.availablePopulation = availablePopulation;
     }
 
-    // Dans la classe ResourceManager
+    // Méthode pour obtenir la population totale de la ville
     public int getTotalPopulation(List<Building> buildingList) {
         int totalPopulation = availablePopulation;
 
-        // Ajoutez ici la population des bâtiments en parcourant la liste des bâtiments
+        // Ajoute ici la population des bâtiments en parcourant la liste des bâtiments
         for (Building building : buildingList) {
             totalPopulation += building.getPopulation();
         }
-
         return totalPopulation;
     }
 

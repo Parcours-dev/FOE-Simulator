@@ -89,6 +89,8 @@ public class GameInterface extends JFrame {
         resourceLabels = new HashMap<>();
 
         for (String resourceName : resources.keySet()) {
+            Manager manager = new Manager();
+            manager.manageResources();
             JLabel resourceLabel = new JLabel(resourceName + ": " + resources.get(resourceName).getQuantity());
             resourcesPanel.add(resourceLabel);
             resourceLabels.put(resourceName, resourceLabel);
@@ -102,8 +104,18 @@ public class GameInterface extends JFrame {
         timer.start();
     }
 
+    // Ajoutez cette méthode à votre classe GameInterface
+    public void updateResourceLabels(Map<String, Resource> resources) {
+        for (String resourceName : resources.keySet()) {
+            resourceLabels.get(resourceName).setText(resourceName + ": " + resources.get(resourceName).getQuantity());
+        }
+    }
+
+
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> new GameInterface().setVisible(true));
+
+
 
     }
 

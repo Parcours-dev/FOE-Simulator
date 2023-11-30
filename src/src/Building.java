@@ -160,12 +160,13 @@ public abstract class Building implements Observable, Observer {
         int availablePopulation = ResourceManager.getInstance().getAvailablePopulation();
 
         if (habitantNumber > 0) {
-            if (habitantNumber <= availablePopulation) {
+            if (habitantNumber <= availablePopulation && habitantNumber <= this.populationLimit - this.population) {
                 this.population += habitantNumber;
                 ResourceManager.getInstance().consumeResource("Population", habitantNumber);
                 ResourceManager.getInstance().setAvailablePopulation(availablePopulation - habitantNumber);
+                System.out.println("Ajout de " + habitantNumber + " habitant(s) au bâtiment");
             } else {
-                System.out.println("Il n'y a pas assez d'habitants disponibles dans la ville.");
+                System.out.println("Il n'y a pas assez d'habitants disponibles dans la ville ou dépasse la limite de population du bâtiment.");
             }
         } else {
             System.out.println("Veuillez entrer un nombre d'habitants positif.");
@@ -222,7 +223,6 @@ public abstract class Building implements Observable, Observer {
     // Implémentation de la méthode de l'interface Observer
     @Override
     public void update() {
-        // Logique à exécuter en réponse à une mise à jour du manager
-    }
+        System.out.println("Le manager a informé ce bâtiment d'un changement.");    }
 
 }

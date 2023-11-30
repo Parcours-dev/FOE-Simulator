@@ -12,7 +12,5 @@ public class AddInhabitantCommand implements Command {
         // Ajouter le nombre d'habitants spécifié au bâtiment
         building.addInhabitant(inhabitantsToAdd);
 
-        // Afficher un message pour informer de l'ajout d'habitants
-        System.out.println(inhabitantsToAdd + " habitant(s) ajouté(s) au bâtiment.");
     }
 }

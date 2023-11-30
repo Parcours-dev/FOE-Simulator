@@ -35,6 +35,7 @@ public class BuildingFactory {
         return buildingConstructors.keySet().stream().toList();
     }
 
+    // Renvoie le coût de construction d'un bâtiment du type spécifié
     public static Map<String, Integer> getBuildingCost(String type) {
         Building building = createBuilding(type);
         if (building == null) {
