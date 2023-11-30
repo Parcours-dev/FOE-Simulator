@@ -3,7 +3,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public abstract class Building implements Observable, Observer {
-    private static final int CONSO_DAILY = 1;
+    private static final int CONSO_DAILY = 0;
 
     // Propriétés de base du bâtiment
     protected int population;
@@ -71,12 +71,14 @@ public abstract class Building implements Observable, Observer {
         }
     }
 
-    // Méthode pour la consommation quotidienne de la population
-    public void populationConsumption() {
+    // Dans la classe Building
+    public void populationConsumption(List<Building> buildingList) {
         ResourceManager resourceManager = ResourceManager.getInstance();
-        int totalFoodConsumption = population * CONSO_DAILY;
+        int totalFoodConsumption = resourceManager.getTotalPopulation(buildingList) * CONSO_DAILY;
         resourceManager.consumeResource("Nourriture", totalFoodConsumption);
     }
+
+
 
     // Méthode pour produire des ressources en fonction de la population
     public void produceResources() {
@@ -177,6 +179,9 @@ public abstract class Building implements Observable, Observer {
             int remainingPopulation = this.population - habitantNumber;
             if (remainingPopulation >= 0) {
                 this.population = remainingPopulation;
+
+                // Restituer la population en tant que ressource "Population"
+                ResourceManager.getInstance().produceResource("Population", habitantNumber);
             } else {
                 System.out.println("Il n'y a pas suffisamment d'habitants à supprimer.");
             }
@@ -219,4 +224,5 @@ public abstract class Building implements Observable, Observer {
     public void update() {
         // Logique à exécuter en réponse à une mise à jour du manager
     }
+
 }

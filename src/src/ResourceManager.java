@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 // Classe gérant les ressources du jeu
@@ -24,7 +25,6 @@ public class ResourceManager {
         resources.put("Population", new Resource("Population", 20));
 
         this.availablePopulation = resources.get("Population").getQuantity();
-
         // Ajouter d'autres ressources ici
     }
 
@@ -94,4 +94,18 @@ public class ResourceManager {
     public void setAvailablePopulation(int availablePopulation) {
         this.availablePopulation = availablePopulation;
     }
+
+    // Dans la classe ResourceManager
+    public int getTotalPopulation(List<Building> buildingList) {
+        int totalPopulation = availablePopulation;
+
+        // Ajoutez ici la population des bâtiments en parcourant la liste des bâtiments
+        for (Building building : buildingList) {
+            totalPopulation += building.getPopulation();
+        }
+
+        return totalPopulation;
+    }
+
+
 }

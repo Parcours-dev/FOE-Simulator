@@ -1,5 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class Manager implements Observer, Observable {
     // Liste des bâtiments gérés par le manager
@@ -20,18 +21,35 @@ public class Manager implements Observer, Observable {
         building.addObserver(this);
     }
 
-    // Méthode pour supprimer un bâtiment du manager
+    // Méthode pour supprimer un bâtiment
     public void removeBuilding(Building building) {
+        // Récupérer la population du bâtiment avant la destruction
+        int buildingPopulation = building.getPopulation();
+        ResourceManager resourceManager = ResourceManager.getInstance();
+
+        // Restituer la population à la population disponible dans la ville
+        ResourceManager.getInstance().produceResource("Population", buildingPopulation);
+
+        // Restituer les ressources de la construction
+        Map<String, Integer> constructionCosts = building.getResourceCosts();
+        for (Map.Entry<String, Integer> entry : constructionCosts.entrySet()) {
+            String resourceName = entry.getKey();
+            int cost = entry.getValue();
+            resourceManager.produceResource(resourceName, cost);
+        }
+
+        // Supprimer le bâtiment de la liste des bâtiments
         buildings.remove(building);
         building.removeObserver(this);
     }
+
 
     // Méthode pour gérer les ressources des bâtiments
     public void manageResources() {
         // Parcourir tous les bâtiments
         for (Building building : buildings) {
             // Appliquer la consommation de population et de ressources
-            building.populationConsumption();
+            building.populationConsumption(buildings);
             building.consumeResources();
             building.produceResources();
         }
@@ -59,4 +77,6 @@ public class Manager implements Observer, Observable {
     public void update() {
         // Logique à exécuter en réponse à une mise à jour d'un bâtiment
     }
+
+
 }

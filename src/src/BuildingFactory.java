@@ -1,4 +1,5 @@
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Supplier;
@@ -16,6 +17,7 @@ public class BuildingFactory {
         buildingConstructors.put("Mine", Mine::new);
         buildingConstructors.put("Scierie", Scierie::new);
         buildingConstructors.put("Forge", Forge::new);
+        buildingConstructors.put("Cabanne en Bois", CabaneEnBois::new);
         // Ajouter d'autres types de bâtiments ici
     }
 
@@ -29,7 +31,18 @@ public class BuildingFactory {
     }
 
     // Renvoie l'ensemble des types de bâtiments disponibles
-    public static Set<String> getBuildingTypes() {
-        return buildingConstructors.keySet();
+    public static List<String> getBuildingTypes() {
+        return buildingConstructors.keySet().stream().toList();
     }
+
+    public static Map<String, Integer> getBuildingCost(String type) {
+        Building building = createBuilding(type);
+        if (building == null) {
+            throw new IllegalArgumentException("Type de bâtiment non pris en charge : " + type);
+        }
+        return building.getResourceCosts();
+    }
+
+
+
 }
