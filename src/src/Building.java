@@ -225,4 +225,5 @@ public abstract class Building implements Observable, Observer {
     public void update() {
         System.out.println("Le manager a informé ce bâtiment d'un changement.");    }
 
+
 }
