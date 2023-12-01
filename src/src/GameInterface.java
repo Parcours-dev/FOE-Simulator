@@ -52,27 +52,19 @@ public class GameInterface extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLayout(new BorderLayout());
 
-
         buildingsPanel = new JPanel();
         gridPanel = new JPanel();
         add(buildingsPanel, BorderLayout.SOUTH);
         add(gridPanel, BorderLayout.CENTER);
-
-        buildingColors = new HashMap<>();
-        buildingColors.put("Maison", Color.BLUE);
-        buildingColors.put("Ferme", Color.GREEN);
-        buildingColors.put("Caserne", Color.RED);
-        buildingColors.put("Carrière", Color.GRAY);
-        buildingColors.put("Mine", Color.BLACK);
-        buildingColors.put("Scierie", Color.ORANGE);
-        buildingColors.put("Forge", Color.YELLOW);
 
         infoPanel = new JPanel(new GridLayout(5, 1));
         productionLabel = new JLabel("Production: ");
         consumptionLabel = new JLabel("Consommation: ");
         populationLabel = new JLabel("Population: ");
         addInhabitantButton = new JButton("Ajouter Habitant");
+        addInhabitantButton.setEnabled(false);
         removeInhabitantButton = new JButton("Supprimer Habitant");
+        removeInhabitantButton.setEnabled(false);
         destroyButton = new JButton("Détruire un bâtiment");
 
         infoPanel.add(productionLabel);
@@ -106,37 +98,62 @@ public class GameInterface extends JFrame {
         buildingIcons.put("Maison", new ImageIcon(getClass().getResource("/image/maison.png")));
         buildingIcons.put("Ferme", new ImageIcon(getClass().getResource("/image/ferme.png")));
         buildingIcons.put("Caserne", new ImageIcon(getClass().getResource("/image/caserne.png")));
+        buildingIcons.put("Cabanne en Bois", new ImageIcon(getClass().getResource("/image/log-cabin.png")));
         buildingIcons.put("Carrière", new ImageIcon(getClass().getResource("/image/carriere.png")));
         buildingIcons.put("Mine", new ImageIcon(getClass().getResource("/image/mine.png")));
         buildingIcons.put("Scierie", new ImageIcon(getClass().getResource("/image/scierie.png")));
         buildingIcons.put("Forge", new ImageIcon(getClass().getResource("/image/forge.png")));
+
+        // Créer une Map pour stocker la correspondance entre les boutons et les
+        // bâtiments
+        Map<JButton, Building> buttonBuildingMap = new HashMap<>();
 
         gridButton.setOpaque(true);
         gridButton.setBorderPainted(true);
         gridButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         gridButton.addActionListener(e -> {
             if (destroyMode && gridButton.getIcon() != null) {
-
-                // Pitié Rémi. Le problème est ici. Je ne sais pas comment faire pour récupérer l'objet Building associé au bouton.
-                // Quand on l'a il suffit de faire manager.removeBuilding(building) et ça marche.
-                // Il faut le faire ici à la place des commentaires
-                gridButton.setIcon(null);
-                clearBuildingInfo();
-                System.out.println("Le bâtiment a été enlevé du terrain.");
-                System.out.println(manager.getBuildings());
+                // Récupérer le bâtiment associé au bouton
+                Building building = buttonBuildingMap.get(gridButton);
+                if (building != null) {
+                    manager.removeBuilding(building);
+                    gridButton.setIcon(null);
+                    clearBuildingInfo();
+                    System.out.println("Le bâtiment a été enlevé du terrain.");
+                    System.out.println(manager.getBuildings());
+                    addInhabitantButton.setEnabled(false);
+                    removeInhabitantButton.setEnabled(false);
+                    // Supprimer la correspondance du bouton et du bâtiment de la Map
+                    buttonBuildingMap.remove(gridButton);
+                }
             } else if (selectedBuilding.get() != null && gridButton.getIcon() == null) {
                 System.out.println(selectedBuilding.get() + " est sur le terrain :)");
                 ImageIcon originalIcon = buildingIcons.get(selectedBuilding.get());
-                Image scaledImage = originalIcon.getImage().getScaledInstance(gridButton.getWidth(), gridButton.getHeight(), Image.SCALE_DEFAULT);
+                Image scaledImage = originalIcon.getImage().getScaledInstance(gridButton.getWidth(),
+                        gridButton.getHeight(), Image.SCALE_DEFAULT);
                 gridButton.setIcon(new ImageIcon(scaledImage));
                 Building building = BuildingFactory.createBuilding(selectedBuilding.get());
                 manager.addBuilding(building);
                 building.build();
                 updateBuildingInfo(building);
+                addInhabitantButton.setEnabled(true);
+                removeInhabitantButton.setEnabled(true);
+                // Ajouter la correspondance du bouton et du bâtiment à la Map
+                buttonBuildingMap.put(gridButton, building);
+            }else if (gridButton.getIcon() != null) {
+                // Un bâtiment est associé à ce bouton
+                Building building = buttonBuildingMap.get(gridButton);
+                if (building != null) {
+                    // Mettre à jour les informations du bâtiment
+                    updateBuildingInfo(building);
+
+                    // Activer les boutons "Ajouter Habitant" et "Supprimer Habitant"
+                    addInhabitantButton.setEnabled(true);
+                    removeInhabitantButton.setEnabled(true);
+                }
             }
         });
     }
-
 
     private void initializeResources() {
         ResourceManager resourceManager = ResourceManager.getInstance();
@@ -157,11 +174,11 @@ public class GameInterface extends JFrame {
             resourceLabels.put(resourceName, resourceLabel);
         }
 
-
-
         destroyButton.addActionListener(e -> {
             // Activer ou désactiver le mode destruction
             destroyMode = !destroyMode;
+            addInhabitantButton.setEnabled(false);
+            removeInhabitantButton.setEnabled(false);
             if (destroyMode) {
                 System.out.println("Mode destruction activé. Sélectionnez un bâtiment à détruire.");
             } else {
@@ -183,7 +200,8 @@ public class GameInterface extends JFrame {
     public static void updateResourceLabels(Map<String, Resource> resources) {
         SwingUtilities.invokeLater(() -> {
             for (String resourceName : resources.keySet()) {
-                resourceLabels.get(resourceName).setText(resourceName + ": " + resources.get(resourceName).getQuantity());
+                resourceLabels.get(resourceName)
+                        .setText(resourceName + ": " + resources.get(resourceName).getQuantity());
             }
         });
     }
@@ -226,8 +244,6 @@ public class GameInterface extends JFrame {
         building.removeInhabitant(1);
         updateBuildingInfo(building);
     }
-
-
 
     private void setupResourceTimer() {
         Thread resourceThread = new Thread(() -> {
