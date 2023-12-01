@@ -226,4 +226,11 @@ public abstract class Building implements Observable, Observer {
         System.out.println("Le manager a informé ce bâtiment d'un changement.");    }
 
 
+    public int gettConstruction() {
+        return tConstruction;
+    }
+
+    public void settConstruction(int tConstruction) {
+        this.tConstruction = tConstruction;
+    }
 }

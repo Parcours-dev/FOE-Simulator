@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionListener;
 import java.util.HashMap;
@@ -13,7 +14,7 @@ public class GameInterface extends JFrame {
 
     private JPanel buildingsPanel;
     private JPanel gridPanel;
-    private Map<String, Color> buildingColors;
+
     private JPanel resourcesPanel;
     private Map<String, Resource> resources;
     private static Map<String, JLabel> resourceLabels;
@@ -29,6 +30,9 @@ public class GameInterface extends JFrame {
     private AtomicReference<String> selectedBuilding = new AtomicReference<>();
     private boolean destroyMode = false;
 
+    private JTable buildingTable;
+    private DefaultTableModel buildingTableModel;
+
     public GameInterface() {
         initializeGUI();
         manager = new Manager();
@@ -36,7 +40,6 @@ public class GameInterface extends JFrame {
         setupResourceTimer();
 
         removeInhabitantButton.addActionListener(e -> {
-            // Activer ou désactiver le mode destruction
             destroyMode = !destroyMode;
             if (destroyMode) {
                 System.out.println("Mode destruction activé. Sélectionnez un bâtiment à détruire.");
@@ -54,7 +57,7 @@ public class GameInterface extends JFrame {
 
         buildingsPanel = new JPanel();
         gridPanel = new JPanel();
-        add(buildingsPanel, BorderLayout.SOUTH);
+        add(buildingsPanel, BorderLayout.PAGE_END);
         add(gridPanel, BorderLayout.CENTER);
 
         infoPanel = new JPanel(new GridLayout(5, 1));
@@ -73,7 +76,7 @@ public class GameInterface extends JFrame {
         infoPanel.add(addInhabitantButton);
         infoPanel.add(removeInhabitantButton);
         infoPanel.add(destroyButton);
-        add(infoPanel, BorderLayout.WEST);
+        add(infoPanel, BorderLayout.LINE_END);
 
         for (String buildingName : BuildingFactory.getBuildingTypes()) {
             JButton buildingButton = new JButton(buildingName);
@@ -89,8 +92,11 @@ public class GameInterface extends JFrame {
         }
 
         resourcesPanel = new JPanel();
-        add(resourcesPanel, BorderLayout.NORTH);
+        add(resourcesPanel, BorderLayout.PAGE_START);
         initializeResourceLabels();
+
+        buildingTable = createBuildingTable();
+        add(buildingTable, BorderLayout.LINE_START);
     }
 
     private void setupGridButton(JButton gridButton) {
@@ -104,8 +110,6 @@ public class GameInterface extends JFrame {
         buildingIcons.put("Scierie", new ImageIcon(getClass().getResource("/image/scierie.png")));
         buildingIcons.put("Forge", new ImageIcon(getClass().getResource("/image/forge.png")));
 
-        // Créer une Map pour stocker la correspondance entre les boutons et les
-        // bâtiments
         Map<JButton, Building> buttonBuildingMap = new HashMap<>();
 
         gridButton.setOpaque(true);
@@ -113,7 +117,6 @@ public class GameInterface extends JFrame {
         gridButton.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
         gridButton.addActionListener(e -> {
             if (destroyMode && gridButton.getIcon() != null) {
-                // Récupérer le bâtiment associé au bouton
                 Building building = buttonBuildingMap.get(gridButton);
                 if (building != null) {
                     manager.removeBuilding(building);
@@ -123,7 +126,6 @@ public class GameInterface extends JFrame {
                     System.out.println(manager.getBuildings());
                     addInhabitantButton.setEnabled(false);
                     removeInhabitantButton.setEnabled(false);
-                    // Supprimer la correspondance du bouton et du bâtiment de la Map
                     buttonBuildingMap.remove(gridButton);
                 }
             } else if (selectedBuilding.get() != null && gridButton.getIcon() == null) {
@@ -138,16 +140,11 @@ public class GameInterface extends JFrame {
                 updateBuildingInfo(building);
                 addInhabitantButton.setEnabled(true);
                 removeInhabitantButton.setEnabled(true);
-                // Ajouter la correspondance du bouton et du bâtiment à la Map
                 buttonBuildingMap.put(gridButton, building);
-            }else if (gridButton.getIcon() != null) {
-                // Un bâtiment est associé à ce bouton
+            } else if (gridButton.getIcon() != null) {
                 Building building = buttonBuildingMap.get(gridButton);
                 if (building != null) {
-                    // Mettre à jour les informations du bâtiment
                     updateBuildingInfo(building);
-
-                    // Activer les boutons "Ajouter Habitant" et "Supprimer Habitant"
                     addInhabitantButton.setEnabled(true);
                     removeInhabitantButton.setEnabled(true);
                 }
@@ -155,9 +152,50 @@ public class GameInterface extends JFrame {
         });
     }
 
+    private JTable createBuildingTable() {
+        String[] columnNames = {"Nom bâtiment", "Nb habitants/travailleurs", "Mat constructions", "Temps de construction (en ms)"};
+        buildingTableModel = new DefaultTableModel(null, columnNames) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+
+        JTable table = new JTable(buildingTableModel);
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        for (String buildingName : BuildingFactory.getBuildingTypes()) {
+            Building building = BuildingFactory.createBuilding(buildingName);
+            Object[] rowData = {
+                    buildingName,
+                    building.getPopulationLimit(),
+                    formatMaterials(building.getResourceCosts()),
+                    building.gettConstruction()
+            };
+            buildingTableModel.addRow(rowData);
+        }
+
+        return table;
+    }
+
+    private String formatMaterials(Map<String, Integer> materials) {
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String, Integer> entry : materials.entrySet()) {
+            result.append(entry.getValue()).append(" ").append(entry.getKey()).append("  ");
+        }
+        return result.toString();
+    }
+
+    private String formatResources(Map<String, Integer> resources) {
+        StringBuilder result = new StringBuilder();
+        for (Map.Entry<String, Integer> entry : resources.entrySet()) {
+            result.append(entry.getValue()).append(" ").append(entry.getKey()).append("  ");
+        }
+        return result.toString();
+    }
+
     private void initializeResources() {
         ResourceManager resourceManager = ResourceManager.getInstance();
-        // Map des ressources, associant le nom de la ressource à son instance
         resources = new HashMap<>();
         resources.put(resourceManager.getResource("Nourriture").getName(), resourceManager.getResource("Nourriture"));
         resources.put(resourceManager.getResource("Bois").getName(), resourceManager.getResource("Bois"));
@@ -175,7 +213,6 @@ public class GameInterface extends JFrame {
         }
 
         destroyButton.addActionListener(e -> {
-            // Activer ou désactiver le mode destruction
             destroyMode = !destroyMode;
             addInhabitantButton.setEnabled(false);
             removeInhabitantButton.setEnabled(false);
@@ -185,7 +222,6 @@ public class GameInterface extends JFrame {
                 System.out.println("Mode destruction désactivé.");
             }
 
-            // Désélectionner tout bâtiment précédemment sélectionné
             selectedBuilding.set(null);
         });
 
