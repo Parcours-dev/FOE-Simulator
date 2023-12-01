@@ -16,13 +16,13 @@ public class ResourceManager {
     // Constructeur privé initialisant les ressources et la population disponible
     private ResourceManager() {
         resources = new HashMap<>();
-        resources.put("Nourriture", new Resource("Nourriture", 400));
-        resources.put("Bois", new Resource("Bois", 400));
-        resources.put("Pierre", new Resource("Pierre", 400));
-        resources.put("Charbon", new Resource("Charbon", 400));
-        resources.put("Fer", new Resource("Fer", 200));
-        resources.put("Acier", new Resource("Acier", 150));
-        resources.put("Population", new Resource("Population", 20));
+        resources.put("Nourriture", new Resource("Nourriture", 50));
+        resources.put("Bois", new Resource("Bois", 10));
+        resources.put("Pierre", new Resource("Pierre", 0));
+        resources.put("Charbon", new Resource("Charbon", 0));
+        resources.put("Fer", new Resource("Fer", 0));
+        resources.put("Acier", new Resource("Acier", 0));
+        resources.put("Population", new Resource("Population", 10));
 
         this.availablePopulation = resources.get("Population").getQuantity();
         // Ajouter d'autres ressources ici
