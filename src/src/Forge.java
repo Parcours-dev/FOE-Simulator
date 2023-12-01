@@ -3,24 +3,20 @@ public class Forge extends Building {
     public Forge() {
         // Initialisation des attributs spécifiques de la Forge
         this.population = 0;
-        this.populationLimit = 10;
-        this.tConstruction = 10000;
+        this.populationLimit = 5;
+        this.tConstruction = 4000;
 
         // Coûts de construction de la Forge
-        this.resourceCosts.put("Nourriture", 70);
-        this.resourceCosts.put("Bois", 40);
-        this.resourceCosts.put("Pierre", 30);
-        this.resourceCosts.put("Fer", 50);
+        this.resourceCosts.put("Bois", 20);
+        this.resourceCosts.put("Pierre", 70);
+        this.resourceCosts.put("Fer", 10);
 
         // Consommation de ressources par la Forge
-        this.resourceConsumption.put("Nourriture", 30);
-        this.resourceConsumption.put("Bois", 30);
-        this.resourceConsumption.put("Pierre", 30);
-        this.resourceConsumption.put("Fer", 30);
+        this.resourceConsumption.put("Charbon", 4);
+        this.resourceConsumption.put("Fer", 2);
 
         // Production de ressources par la Forge
-        this.resourceProduction.put("Acier", 60);
-        this.resourceProduction.put("Charbon", 40);
+        this.resourceProduction.put("Acier", 2);
     }
 
     // Méthode pour obtenir le type de bâtiment

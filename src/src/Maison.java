@@ -8,14 +8,11 @@ public class Maison extends Building {
         this.tConstruction = 3000;
 
         // Coûts de construction de la Maison
-        this.resourceCosts.put("Nourriture", 40);
-        this.resourceCosts.put("Bois", 20);
-        this.resourceCosts.put("Pierre", 10);
-        this.resourceCosts.put("Fer", 20);
+        this.resourceCosts.put("Bois", 50);
+        this.resourceCosts.put("Pierre", 50);
 
         // Consommation de ressources par la Maison
-        this.resourceConsumption.put("Bois", 5);
-        this.resourceConsumption.put("Nourriture", 15);
+
 
         // Production de ressources par la Maison
         this.resourceProduction.put("Population", 1);

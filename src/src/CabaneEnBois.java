@@ -5,10 +5,10 @@ public class CabaneEnBois extends Building {
         this.population = 0;
 
         // Limite de population pour la CabaneEnBois
-        this.populationLimit = 10;
+        this.populationLimit = 2;
 
         // Temps de construction en millisecondes
-        this.tConstruction = 5000;
+        this.tConstruction = 1000;
 
         // Coûts en ressources pour construire une CabaneEnBois
         this.resourceCosts.put("Bois", 1);

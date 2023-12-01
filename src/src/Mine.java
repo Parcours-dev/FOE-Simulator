@@ -4,23 +4,20 @@ public class Mine extends Building {
     public Mine() {
         // Initialisation des attributs de la classe parent (Building)
         this.population = 0;
-        this.populationLimit = 10;
-        this.tConstruction = 5000;
+        this.populationLimit = 20;
+        this.tConstruction = 3000;
 
         // Coûts de construction de la mine
-        this.resourceCosts.put("Nourriture", 50);
-        this.resourceCosts.put("Bois", 30);
-        this.resourceCosts.put("Pierre", 20);
-        this.resourceCosts.put("Fer", 30);
+        this.resourceCosts.put("Bois", 20);
+        this.resourceCosts.put("Pierre", 80);
 
         // Consommation de ressources par la mine
-        this.resourceConsumption.put("Nourriture", 5);
         this.resourceConsumption.put("Bois", 5);
-        this.resourceConsumption.put("Pierre", 5);
-        this.resourceConsumption.put("Fer", 5);
 
         // Production de ressources par la mine
-        this.resourceProduction.put("Fer", 120);
+        this.resourceProduction.put("Pierre", 5);
+        this.resourceProduction.put("Charbon", 4);
+        this.resourceProduction.put("Fer", 3);
     }
 
     // Méthode pour obtenir le type de la mine
