@@ -1,7 +1,13 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableCellRenderer;
 import java.awt.*;
 import java.awt.event.ActionListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicReference;
@@ -32,12 +38,14 @@ public class GameInterface extends JFrame {
 
     private JTable buildingTable;
     private DefaultTableModel buildingTableModel;
+    Map<String, ImageIcon> buildingIcons = new HashMap<>();
 
     public GameInterface() {
         initializeGUI();
         manager = new Manager();
         initializeResources();
         setupResourceTimer();
+        initializeBuildingIcons();
 
         removeInhabitantButton.addActionListener(e -> {
             destroyMode = !destroyMode;
@@ -47,6 +55,17 @@ public class GameInterface extends JFrame {
                 System.out.println("Mode destruction désactivé.");
             }
         });
+    }
+
+    private void initializeBuildingIcons() {
+        buildingIcons.put("Maison", new ImageIcon(getClass().getResource("/image/maison.png")));
+        buildingIcons.put("Ferme", new ImageIcon(getClass().getResource("/image/ferme.png")));
+        buildingIcons.put("Caserne", new ImageIcon(getClass().getResource("/image/caserne.png")));
+        buildingIcons.put("Cabanne en Bois", new ImageIcon(getClass().getResource("/image/log-cabin.png")));
+        buildingIcons.put("Carrière", new ImageIcon(getClass().getResource("/image/carriere.png")));
+        buildingIcons.put("Mine", new ImageIcon(getClass().getResource("/image/mine.png")));
+        buildingIcons.put("Scierie", new ImageIcon(getClass().getResource("/image/scierie.png")));
+        buildingIcons.put("Forge", new ImageIcon(getClass().getResource("/image/forge.png")));
     }
 
     private void initializeGUI() {
@@ -70,13 +89,25 @@ public class GameInterface extends JFrame {
         removeInhabitantButton.setEnabled(false);
         destroyButton = new JButton("Détruire un bâtiment");
 
+        infoPanel = new JPanel(new GridLayout(5, 1));
+        ((GridLayout) infoPanel.getLayout()).setVgap(30);
+        ((GridLayout) infoPanel.getLayout()).setHgap(30);
+
         infoPanel.add(productionLabel);
         infoPanel.add(consumptionLabel);
         infoPanel.add(populationLabel);
         infoPanel.add(addInhabitantButton);
         infoPanel.add(removeInhabitantButton);
         infoPanel.add(destroyButton);
-        add(infoPanel, BorderLayout.LINE_END);
+        // infoPanel.setPreferredSize(new Dimension(200, getHeight()));
+        // add(infoPanel, BorderLayout.LINE_START);
+        buildingTable = createBuildingTable();
+
+        JPanel leftPanel = new JPanel(new BorderLayout());
+        leftPanel.add(infoPanel, BorderLayout.NORTH);
+        leftPanel.add(new JScrollPane(buildingTable), BorderLayout.CENTER);
+        add(leftPanel, BorderLayout.LINE_START);
+        leftPanel.setBorder(new EmptyBorder(0, 10, 0, 10));
 
         for (String buildingName : BuildingFactory.getBuildingTypes()) {
             JButton buildingButton = new JButton(buildingName);
@@ -88,6 +119,19 @@ public class GameInterface extends JFrame {
         for (int i = 0; i < 100; i++) {
             JButton gridButton = new JButton();
             setupGridButton(gridButton);
+            gridButton.addComponentListener(new ComponentAdapter() {
+                @Override
+                public void componentResized(ComponentEvent e) {
+                    if (gridButton.getIcon() != null) {
+                        String buildingName = selectedBuilding.get();
+                        ImageIcon originalIcon = buildingIcons.get(buildingName);
+                        Image scaledImage = originalIcon.getImage().getScaledInstance(gridButton.getWidth(),
+                                gridButton.getHeight(), Image.SCALE_SMOOTH);
+                        gridButton.setIcon(new ImageIcon(scaledImage));
+                    }
+                }
+            });
+
             gridPanel.add(gridButton);
         }
 
@@ -96,20 +140,11 @@ public class GameInterface extends JFrame {
         initializeResourceLabels();
 
         buildingTable = createBuildingTable();
-        add(buildingTable, BorderLayout.LINE_START);
+        // add(buildingTable, BorderLayout.LINE_START);
+
     }
 
     private void setupGridButton(JButton gridButton) {
-        Map<String, ImageIcon> buildingIcons = new HashMap<>();
-        buildingIcons.put("Maison", new ImageIcon(getClass().getResource("/image/maison.png")));
-        buildingIcons.put("Ferme", new ImageIcon(getClass().getResource("/image/ferme.png")));
-        buildingIcons.put("Caserne", new ImageIcon(getClass().getResource("/image/caserne.png")));
-        buildingIcons.put("Cabanne en Bois", new ImageIcon(getClass().getResource("/image/log-cabin.png")));
-        buildingIcons.put("Carrière", new ImageIcon(getClass().getResource("/image/carriere.png")));
-        buildingIcons.put("Mine", new ImageIcon(getClass().getResource("/image/mine.png")));
-        buildingIcons.put("Scierie", new ImageIcon(getClass().getResource("/image/scierie.png")));
-        buildingIcons.put("Forge", new ImageIcon(getClass().getResource("/image/forge.png")));
-
         Map<JButton, Building> buttonBuildingMap = new HashMap<>();
 
         gridButton.setOpaque(true);
@@ -153,7 +188,8 @@ public class GameInterface extends JFrame {
     }
 
     private JTable createBuildingTable() {
-        String[] columnNames = {"Nom bâtiment", "Nb habitants/travailleurs", "Mat constructions", "Temps de construction (en ms)"};
+        String[] columnNames = { "Bâtiment", "Nb habitants/travailleurs", "Mat constructions",
+                "Tps de construction (en ms)" };
         buildingTableModel = new DefaultTableModel(null, columnNames) {
             @Override
             public boolean isCellEditable(int row, int column) {
@@ -163,6 +199,52 @@ public class GameInterface extends JFrame {
 
         JTable table = new JTable(buildingTableModel);
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+        // Ajout de styles personnalisés
+        table.setFont(new Font("Serif", Font.PLAIN, 10)); // Change la police et la taille du texte
+        table.setRowHeight(30); // Change la hauteur des lignes
+        table.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 13)); // Change la police et la taille du texte
+        // de l'en-tête
+        table.setBorder(BorderFactory.createLineBorder(Color.BLACK)); // Ajoute une bordure noire autour du tableau
+
+        // Ajout du renderer pour les tooltips des cellules
+        DefaultTableCellRenderer cellRenderer = new DefaultTableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                           boolean hasFocus, int row, int column) {
+                Component c = super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
+                if (c instanceof JComponent) {
+                    JComponent jc = (JComponent) c;
+                    jc.setToolTipText(value.toString());
+                }
+                return c;
+            }
+        };
+        table.setDefaultRenderer(Object.class, cellRenderer);
+
+        // Récupération du renderer par défaut de l'en-tête
+        TableCellRenderer defaultHeaderRenderer = table.getTableHeader().getDefaultRenderer();
+
+        // Création du renderer pour les tooltips des en-têtes
+        TableCellRenderer headerRenderer = new TableCellRenderer() {
+            @Override
+            public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected,
+                                                           boolean hasFocus, int row, int column) {
+                Component c = defaultHeaderRenderer.getTableCellRendererComponent(table, value, isSelected, hasFocus,
+                        row, column);
+                if (c instanceof JComponent) {
+                    JComponent jc = (JComponent) c;
+                    jc.setToolTipText(value.toString());
+                }
+                return c;
+            }
+        };
+
+        // Application du renderer aux en-têtes
+        JTableHeader header = table.getTableHeader();
+        for (int i = 0; i < table.getModel().getColumnCount(); i++) {
+            header.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer);
+        }
 
         for (String buildingName : BuildingFactory.getBuildingTypes()) {
             Building building = BuildingFactory.createBuilding(buildingName);
@@ -181,14 +263,6 @@ public class GameInterface extends JFrame {
     private String formatMaterials(Map<String, Integer> materials) {
         StringBuilder result = new StringBuilder();
         for (Map.Entry<String, Integer> entry : materials.entrySet()) {
-            result.append(entry.getValue()).append(" ").append(entry.getKey()).append("  ");
-        }
-        return result.toString();
-    }
-
-    private String formatResources(Map<String, Integer> resources) {
-        StringBuilder result = new StringBuilder();
-        for (Map.Entry<String, Integer> entry : resources.entrySet()) {
             result.append(entry.getValue()).append(" ").append(entry.getKey()).append("  ");
         }
         return result.toString();

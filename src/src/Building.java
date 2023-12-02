@@ -157,10 +157,11 @@ public abstract class Building implements Observable, Observer {
 
     // Méthode pour ajouter un habitant
     public void addInhabitant(int habitantNumber) {
-        int availablePopulation = ResourceManager.getInstance().getAvailablePopulation();
-
         if (habitantNumber > 0) {
-            if (habitantNumber <= availablePopulation && habitantNumber <= this.populationLimit - this.population) {
+            int availablePopulation = ResourceManager.getInstance().getAvailablePopulation();
+            int remainingCapacity = this.populationLimit - this.population;
+
+            if (habitantNumber <= availablePopulation && habitantNumber <= remainingCapacity) {
                 this.population += habitantNumber;
                 ResourceManager.getInstance().consumeResource("Population", habitantNumber);
                 ResourceManager.getInstance().setAvailablePopulation(availablePopulation - habitantNumber);
@@ -171,6 +172,7 @@ public abstract class Building implements Observable, Observer {
         } else {
             System.out.println("Veuillez entrer un nombre d'habitants positif.");
         }
+
     }
 
 
