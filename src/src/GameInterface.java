@@ -145,8 +145,7 @@ public class GameInterface extends JFrame {
                 @Override
                 public void componentResized(ComponentEvent e) {
                     if (gridButton.getIcon() != null) {
-                        String buildingName = selectedBuilding.get();
-                        ImageIcon originalIcon = buildingIcons.get(buildingName);
+                        ImageIcon originalIcon = (ImageIcon) gridButton.getIcon();
                         Image scaledImage = originalIcon.getImage().getScaledInstance(gridButton.getWidth(),
                                 gridButton.getHeight(), Image.SCALE_SMOOTH);
                         gridButton.setIcon(new ImageIcon(scaledImage));
