@@ -22,7 +22,7 @@ public class ResourceManager {
         resources.put("Charbon", new Resource("Charbon", 0));
         resources.put("Fer", new Resource("Fer", 0));
         resources.put("Acier", new Resource("Acier", 0));
-        resources.put("Population", new Resource("Population", 10));
+        resources.put("Population", new Resource("Population", 100));
 
         this.availablePopulation = resources.get("Population").getQuantity();
         // Ajouter d'autres ressources ici
