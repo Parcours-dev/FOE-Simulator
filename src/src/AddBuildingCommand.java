@@ -22,3 +22,5 @@ public class AddBuildingCommand implements Command {
         System.out.println("Nouveau bâtiment de type " + buildingType + " en cours de construction !");
     }
 }
+
+

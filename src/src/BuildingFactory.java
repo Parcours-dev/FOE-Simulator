@@ -1,7 +1,6 @@
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.function.Supplier;
 
 public class BuildingFactory {
@@ -18,7 +17,6 @@ public class BuildingFactory {
         buildingConstructors.put("Scierie", Scierie::new);
         buildingConstructors.put("Forge", Forge::new);
         buildingConstructors.put("Cabanne en Bois", CabaneEnBois::new);
-        // Ajouter d'autres types de bâtiments ici
     }
 
     // Crée un nouveau bâtiment du type spécifié
@@ -29,6 +27,7 @@ public class BuildingFactory {
         }
         return constructor.get();
     }
+
 
     // Renvoie l'ensemble des types de bâtiments disponibles
     public static List<String> getBuildingTypes() {

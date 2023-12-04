@@ -16,8 +16,8 @@ public class ResourceManager {
     // Constructeur privé initialisant les ressources et la population disponible
     private ResourceManager() {
         resources = new HashMap<>();
-        resources.put("Nourriture", new Resource("Nourriture", 50));
-        resources.put("Bois", new Resource("Bois", 10));
+        resources.put("Nourriture", new Resource("Nourriture", 10000));
+        resources.put("Bois", new Resource("Bois", 1000));
         resources.put("Pierre", new Resource("Pierre", 0));
         resources.put("Charbon", new Resource("Charbon", 0));
         resources.put("Fer", new Resource("Fer", 0));
@@ -25,7 +25,6 @@ public class ResourceManager {
         resources.put("Population", new Resource("Population", 100));
 
         this.availablePopulation = resources.get("Population").getQuantity();
-        // Ajouter d'autres ressources ici
     }
 
     // Méthode statique pour obtenir l'instance unique de la classe (singleton)

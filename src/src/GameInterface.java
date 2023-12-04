@@ -192,8 +192,7 @@ public class GameInterface extends JFrame {
             } else if (selectedBuilding.get() != null && gridButton.getIcon() == null) {
                 System.out.println(selectedBuilding.get() + " est sur le terrain :)");
                 ImageIcon originalIcon = buildingIcons.get(selectedBuilding.get());
-                Image scaledImage = originalIcon.getImage().getScaledInstance(gridButton.getWidth(),
-                        gridButton.getHeight(), Image.SCALE_DEFAULT);
+                Image scaledImage = originalIcon.getImage().getScaledInstance(gridButton.getWidth(), gridButton.getHeight(), Image.SCALE_DEFAULT);
                 gridButton.setIcon(new ImageIcon(scaledImage));
                 Building building = BuildingFactory.createBuilding(selectedBuilding.get());
                 manager.addBuilding(building);
@@ -422,6 +421,15 @@ public class GameInterface extends JFrame {
             }
         });
         resourceThread.start();
+    }
+
+    // Méthode pour afficher la consommation et la production de toutes les ressources
+    public static void showResource() {
+        for (Map.Entry<String, Resource> entry : resourceManager.getResources().entrySet()) {
+            String resourceName = entry.getKey();
+            int amount = entry.getValue().getQuantity();
+            System.out.println(resourceName + " : " + amount);
+        }
     }
 
     // Méthode principale pour lancer l'interface graphique du jeu

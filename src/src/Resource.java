@@ -15,7 +15,7 @@ public class Resource {
     }
 
     // Méthode statique pour obtenir l'instance unique de la classe (singleton)
-    public static Resource getInstance(String name, int quantity) {
+        public static Resource getInstance(String name, int quantity) {
         if (instance == null) {
             instance = new Resource(name, quantity);
         }

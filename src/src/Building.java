@@ -3,7 +3,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public abstract class Building implements Observable, Observer {
-    private static final int CONSO_DAILY = 0;
+    private static final int CONSO_DAILY = 1;
 
     // Propriétés de base du bâtiment
     protected int population;

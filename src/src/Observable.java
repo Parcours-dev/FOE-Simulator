@@ -1,7 +1,6 @@
 import java.util.ArrayList;
 import java.util.List;
 
-// Interface représentant un objet observable
 public interface Observable {
     // Liste d'observateurs (initialisée par défaut avec une liste vide)
     List<Observer> observers = new ArrayList<>();
@@ -23,3 +22,4 @@ public interface Observable {
         }
     }
 }
+
